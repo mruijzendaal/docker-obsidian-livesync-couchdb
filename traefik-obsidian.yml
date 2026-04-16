@@ -1,0 +1,32 @@
+http:
+  middlewares:
+    cors-headers-obsidian:
+      headers:
+        accessControlAllowOriginList:
+          - "app://obsidian.md"
+          - "capacitor://localhost"
+          - "http://localhost"
+        accessControlAllowHeaders: "accept,authorization,content-type,origin,referer"
+        accessControlAllowMethods:
+          - GET
+          - OPTIONS
+          - PUT
+          - POST
+          - DELETE
+        accessControlMaxAge: 3600
+        addVaryHeader: true
+        accessControlAllowCredentials: true
+  routers:
+    couchdb-obsidian-livesync:
+      rule: "Host(`obsidian.mydomain.com`)"
+      entrypoints: websecure
+      # tls: true
+      service: couchdb-obsidian-livesync
+      middlewares:
+        - cors-headers-obsidian
+
+  services:
+    couchdb-obsidian-livesync:
+      loadBalancer:
+        servers:
+          - url: "http://couchdb-obsidian-livesync:5984"
